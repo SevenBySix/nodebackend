@@ -1,28 +1,22 @@
+// index.js
+
 const express = require('express');
-const mysql = require('mysql2');
 const cors = require('cors');
-const app = express();
+const db = require('./db'); // Import the database pool
 const port = 5000;
+const app = express();
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 
-// Create MySQL connection pool
-const pool = mysql.createPool({
-  host: 'localhost',  // Replace with your MySQL host
-  user: 'root',       // Replace with your MySQL username
-  password: '',       // Replace with your MySQL password
-  database: 'test_db' // Replace with your MySQL database name
-}).promise();
-
-// API endpoint for running SQL queries
+// Route to accept SQL queries from the frontend
 app.post('/api/query', async (req, res) => {
-  const { query } = req.body;
+  const { query } = req.body; // Get the SQL query from the request body
 
   try {
-    const [rows] = await pool.query(query);
-    res.json({ success: true, data: rows });
+    const [rows] = await db.query(query); // Run the query
+    res.json({ success: true, data: rows }); // Return the result
   } catch (err) {
     console.error('Error executing query:', err);
     res.status(500).json({ success: false, message: 'Error executing query', error: err.message });
@@ -30,6 +24,7 @@ app.post('/api/query', async (req, res) => {
 });
 
 // Start the server
+
 app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+  console.log(`Server running on port ${PORT}`);
 });

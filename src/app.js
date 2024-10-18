@@ -2,12 +2,12 @@
 
 const express = require('express');
 const cors = require('cors');
+const https = require('https');
+const fs = require('fs');
 const db = require('./db.js'); // Import the database pool
 const port = 5000;
 const app = express();
 
-// Middleware
-app.use(cors());
 app.use(cors({
   origin: '*',  // Allows requests from any origin
   methods: ['GET', 'POST'],
@@ -29,8 +29,13 @@ app.post('/api/query', async (req, res) => {
   }
 });
 
-// Start the server
+// HTTPS options
+const options = {
+  key: fs.readFileSync('~/private.key'),    
+  cert: fs.readFileSync('~/certificate.crt') 
+};
 
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+// Start the server
+https.createServer(options, app).listen(port, () => {
+  console.log(`Secure server running on port ${port}`);
 });

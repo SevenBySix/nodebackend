@@ -20,11 +20,12 @@ app.post('/api/query', async (req, res) => {
   const { query } = req.body; // Get the SQL query from the request body
 
   try {
-    const [rows] = await db.query(query); // Run the query
-    res.json({ success: true, data: rows }); // Return the result
-  } catch (err) {
-    console.error('Error executing query:', err);
-    res.status(500).json({ success: false, message: 'Error executing query', error: err.message });
+    const result = await db.execute(query);
+    res.json(result);  // Return the result to the frontend
+  } catch (error) {
+    console.error('Database error:', error.message);
+    // Respond with a 500 error if the DB is unavailable
+    res.status(500).json({ message: 'Database not available' });
   }
 });
 

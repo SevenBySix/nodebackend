@@ -31,8 +31,8 @@ app.post('/api/query', async (req, res) => {
 
 // HTTPS options
 const options = {
-  key: fs.readFileSync('~/private.key'),    
-  cert: fs.readFileSync('~/certificate.crt') 
+  key: fs.readFileSync('/home/ubuntu/private.key'),    
+  cert: fs.readFileSync('/home/ubuntu/certificate.crt') 
 };
 
 // Start the server

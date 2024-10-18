@@ -8,6 +8,11 @@ const app = express();
 
 // Middleware
 app.use(cors());
+app.use(cors({
+  origin: '*',  // Allows requests from any origin
+  methods: ['GET', 'POST'],
+}));
+
 app.use(express.json());
 
 // Route to accept SQL queries from the frontend

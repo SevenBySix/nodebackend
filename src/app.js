@@ -2,7 +2,7 @@
 
 const express = require('express');
 const cors = require('cors');
-const db = require('./db'); // Import the database pool
+const db = require('./db.js'); // Import the database pool
 const port = 5000;
 const app = express();
 

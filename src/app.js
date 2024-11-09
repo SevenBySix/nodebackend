@@ -7,8 +7,12 @@ const fs = require('fs');
 const bcrypt = require('bcrypt');
 
 const db = require('./db.js'); //Import the database pool
+const database = require('./database.js');
+const User = require("./models/Client");
+
 const authMiddleware = require("./auth/authMiddleware");
 const { generateToken } = require("./auth/jwtUtils");
+const authRoutes = require("./auth/authRoutes");
 
 const port = 5000;
 const app = express();
@@ -34,57 +38,19 @@ app.post('/api/query', async (req, res) => {
   }
 });
 
-//this is about what registration will look like, we need to make models for data objects
-app.post('/api/register', async (req, res) => {
-	try{
-		const {email, password} = req.body;
-		const hashedPassword = await bcrypt.hash(password, 10);
-		const user = new User({ email, password: hashedPassword });
-		await user.save();//this may need to change
-		res.status(201).json({ message: 'User registered successfully' });
-	}catch (err){
-		res.status(500).json({ error: 'Registration failed' });
-	}
-});
-
-app.post('/api/login', async (req, res) => {
-	try{
-		const {email, password} = req.body;
-		const user = await User.findOne({email});
-		
-		const passwordMatched = bcrypt.compare(password, user.password);
-		if(passwordMatched){
-			const token = generateToken({ Email: email });
-			res.json({ token });
-		}
-	}catch (err){
-		res.status(500).json({ error: 'Login failed' });
-	}
-});
-
+//adding auth routes for authentication
+app.use("/clientAuth", authRoutes);
 
 // Route to accept Scheduling request
 app.post('/api/schedule', async (req, res) => {
 	const {petName, email, date, time} = req.body;
-	
-	// Get Owner id from email
-	const sql = 'SELECT ID FROM owner WHERE Email = ?'; 
-	const [rows] = await db.execute(sql, [email]);
-	const ownerID = rows[0].ID;
-//to do, do the same with patient ID, convert data and time into DATETIME mysql variable, then make the right insert statement::
-	//get patient ID from email
-	const sql = 'SELECT ID from patient WHERE name = ? AND '
 
-	const sql = 'INSERT INSERT INTO appointments (name, email, date, time) VALUES (?, ?, ?, ?)';
-  	const values = [petNname, email, date, time];'
-
-	db.query(sql, values, (err, result) => {
     	if (err) {
       		console.error('Error inserting data:', err);
       		res.status(500).send('Error scheduling appointment.');
     	} else {
       		res.status(201).send('Appointment scheduled successfully.');
-    	}});	
+    	}	
 });
 
 // HTTPS options
@@ -93,7 +59,23 @@ const options = {
   cert: fs.readFileSync('/home/ubuntu/certificate.crt') 
 };
 
-// Start the server
+// connect to the database server
+async function initdb(){
+	try {
+  		await database.authenticate();
+  		console.log('Connection to database has been established successfully.');
+	} catch (error) {
+  		console.error('Unable to connect to the database:', error);
+	}
+	try {
+    		await database.sync(); //this will force syncing and create tables that dont already exist
+    	console.log("Database synchronized.");
+  	} catch (error) {
+    		console.error("Failed to sync database:", error);
+  	}
+}
+initdb();
+
 https.createServer(options, app).listen(port, () => {
   console.log(`Secure server running on port ${port}`);
 });

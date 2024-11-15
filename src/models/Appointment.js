@@ -52,5 +52,6 @@ Appointment.init(
     timestamps: true
   }
 );
-
+Appointment.belongsTo(Client, { foreignKey: 'client_id' }); // client_id is foreign key referencing Client
+Appointment.belongsTo(Client, { foreignKey: 'client_email', targetKey: 'email' });
 module.exports = Appointment;

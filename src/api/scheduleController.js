@@ -22,8 +22,8 @@ async function schedule(req, res){
         	}
 
 		const newAppointment = await Appointment.create({
-			clientId,
-			email,
+			client_id: clientId,
+			client_email: email,
 			patientName,
 			patientBreed,
 			patientType,

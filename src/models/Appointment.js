@@ -52,3 +52,5 @@ Appointment.init(
     timestamps: true
   }
 );
+
+module.exports = Appointment;

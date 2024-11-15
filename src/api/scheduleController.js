@@ -1,5 +1,5 @@
 const Appointment = require("../models/Appointment");
-const Client = require("../models/Appointment");
+const Client = require("../models/Client");
 
 async function schedule(req, res){
 	const { email, patientName, patientBreed, patientType,
@@ -10,7 +10,7 @@ async function schedule(req, res){
 		return res.status(400).json({ error: "All fields are required." });
     	}
 	try{
-		const clientID = await Client.findOne({ where: { email } });
+		const client = await Client.findOne({ where: { email } });
 
 		const clientId = client.id;
 

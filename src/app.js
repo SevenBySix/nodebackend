@@ -60,8 +60,8 @@ app.post('/api/schedule', async (req, res) => {
 
 // HTTPS options
 const options = {
-  key: fs.readFileSync('/home/ubuntu/private.key'),    
-  cert: fs.readFileSync('/home/ubuntu/certificate.crt') 
+  key: fs.readFileSync("/home/ubuntu/privkey.pem"),    
+  cert: fs.readFileSync("/home/ubuntu/fullchain.pem"),
 };
 
 // connect to the database server

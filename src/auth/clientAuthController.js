@@ -25,13 +25,17 @@ async function login(req, res) {
   const { email, password } = req.body;
   try {
     const user = await Client.findOne({ where: { email } });
+    if (!user) {
+      return res.status(401).json({ error: "Invalid email or password" });
+    }
+
     const passwordMatched = await bcrypt.compare(password, user.password);
-    if (!user || !passwordMatched) { 
+    if (!passwordMatched) {
       return res.status(401).json({ error: "Invalid email or password" });
     }
 
     const token = generateToken({ Email: email });
-    res.json({ token });
+    res.status(201).json({ message: "Login successful", token });
   } catch (error) {
     res.status(500).json({ error: "Failed to log in", details: error.message });
   }

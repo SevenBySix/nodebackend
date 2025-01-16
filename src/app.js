@@ -15,6 +15,8 @@ const { generateToken } = require("./auth/jwtUtils");
 const authRoutes = require("./auth/authRoutes");
 
 const apiRoutes = require("./api/apiRoutes");
+const { schedule } = require("./api/scheduleController");
+
 
 const port = 5000;
 const app = express();
@@ -43,20 +45,7 @@ app.post('/api/query', async (req, res) => {
 //adding auth routes for authentication
 app.use("/clientAuth", authRoutes);
 
-//adding api route for appointment scheduling
-app.use("/api", apiRoutes);
-
-// Route to accept Scheduling request
-app.post('/api/schedule', async (req, res) => {
-	const {petName, email, date, time} = req.body;
-
-    	if (err) {
-      		console.error('Error inserting data:', err);
-      		res.status(500).send('Error scheduling appointment.');
-    	} else {
-      		res.status(201).send('Appointment scheduled successfully.');
-    	}	
-});
+app.post("/api/schedule", schedule);
 
 // HTTPS options
 const options = {

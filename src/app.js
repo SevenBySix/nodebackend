@@ -44,8 +44,8 @@ app.post('/api/query', async (req, res) => {
 
 //adding auth routes for authentication
 app.use("/clientAuth", authRoutes);
+app.use("/api", apiRoutes);
 
-app.post("/api/schedule", schedule);
 
 // HTTPS options
 const options = {

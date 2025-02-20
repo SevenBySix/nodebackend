@@ -1,57 +1,16 @@
-const { DataTypes, Model } = require("sequelize");
-const sequelize = require("../database");
-const Client = require("./Client");
+const { DataTypes } = require("sequelize");
+const database = require("../database");
+const Patient = require("./Patient");
 
-class Appointment extends Model{}
+const Appointment = database.define("Appointment", {
+  id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+  patient_id: { type: DataTypes.INTEGER, allowNull: true, references: { model: Patient, key: "id" } },
+  date: { type: DataTypes.DATEONLY, allowNull: false },
+  time: { type: DataTypes.TIME, allowNull: false }
+}, { timestamps: false });
 
-Appointment.init(
-  {
-    id: {
-      type: DataTypes.INTEGER,
-      autoIncrement: true,
-      primaryKey: true
-    },
-    client_id: {
-      type: DataTypes.INTEGER,
-      references: {
-	      model: Client,
-	      key: 'id',
-      }
-    },
-    client_email: {
-      type: DataTypes.STRING,
-      references: {
-              model: Client,
-              key: 'email',
-      }
-    },
-    patientName: {
-      type: DataTypes.STRING
-    },
-    patientBreed: {
-      type: DataTypes.STRING
-    },
-    patientType: {
-      type: DataTypes.STRING
-    },
-    clientName: {
-      type: DataTypes.STRING
-    },
-    date: {
-      type: DataTypes.DATE
-    },
-    time: {
-      type: DataTypes.TIME
-    }
-    
-  },
-  {
-    sequelize, // Passing the Sequelize instance
-    modelName: "Appointment", // Model name
-    tableName: "appointments", // Table name; optional
-    timestamps: true
-  }
-);
-Appointment.belongsTo(Client, { foreignKey: 'client_id' }); // client_id is foreign key referencing Client
-Appointment.belongsTo(Client, { foreignKey: 'client_email', targetKey: 'email' });
+Patient.hasMany(Appointment, { foreignKey: "patient_id" });
+Appointment.belongsTo(Patient, { foreignKey: "patient_id" });
+
 module.exports = Appointment;
+
